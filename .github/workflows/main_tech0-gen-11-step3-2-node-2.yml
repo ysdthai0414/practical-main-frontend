@@ -29,17 +29,14 @@ jobs:
           npm install
           npm run build
 
-      - name: Prepare deploy folder
+      - name: Zip artifact for deployment
         run: |
-          mkdir -p deploy
-          cp -r .next deploy/.next
-          cp package.json deploy/
-          cp package-lock.json deploy/
+          zip -r app.zip .
 
       - uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: deploy
+          path: app.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -49,11 +46,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: node-app
-          path: deploy
+          path: .
 
       - uses: azure/webapps-deploy@v3
         with:
           app-name: 'tech0-gen-11-step3-2-node-2'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0760849A0F2046DAA85206A387B93332 }}
-          package: ./deploy
+          package: app.zip
