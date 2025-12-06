@@ -10,15 +10,41 @@ async function fetchCustomer(id) {
   return res.json();
 }
 
-export default async function ReadPage({ query }) {
-  const { id } = query;
+export default async function ReadPage(props) {
+  const searchParams = props?.searchParams ?? {};
+  const id = searchParams.id;
+
+  if (!id) {
+    return (
+      <>
+        <div className="alert alert-error">顧客IDが指定されていません。</div>
+        <button className="btn btn-outline btn-accent">
+          <a href="/customers">一覧に戻る</a>
+        </button>
+      </>
+    );
+  }
+
   const customerInfo = await fetchCustomer(id);
+
+  if (!Array.isArray(customerInfo) || customerInfo.length === 0) {
+    return (
+      <>
+        <div className="alert alert-error">顧客情報が見つかりませんでした。</div>
+        <button className="btn btn-outline btn-accent">
+          <a href="/customers">一覧に戻る</a>
+        </button>
+      </>
+    );
+  }
+
+  const customer = customerInfo[0];
 
   return (
     <>
       <div className="alert alert-success">更新しました</div>
       <div className="card bordered bg-white border-blue-200 border-2 max-w-sm m-4">
-        <OneCustomerInfoCard {...customerInfo[0]} />
+        <OneCustomerInfoCard {...customer} />
       </div>
       <button className="btn btn-outline btn-accent">
         <a href="/customers">一覧に戻る</a>
