@@ -31,14 +31,13 @@ jobs:
 
       - name: Prepare deploy folder
         run: |
-          mkdir -p deploy/.next
-          cp -r .next/standalone/* deploy/
-          cp -r .next/static deploy/.next/static
+          mkdir -p deploy
+          cp -r .next deploy/.next
+          cp -r public deploy/public
           cp package.json deploy/
           cp package-lock.json deploy/
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: node-app
           path: deploy
@@ -53,8 +52,7 @@ jobs:
           name: node-app
           path: deploy
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      - uses: azure/webapps-deploy@v3
         with:
           app-name: 'tech0-gen-11-step3-2-node-2'
           slot-name: 'Production'
